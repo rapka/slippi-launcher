@@ -5,7 +5,7 @@ import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
 import { ipc_consoleMirrorErrorMessageEvent, ipc_consoleMirrorStatusUpdatedEvent } from "./endpoints";
-import { Methods as MirrorWorkerMethods, WorkerSpec as MirrorWorkerSpec } from "./mirrorWorker";
+import { Methods as MirrorWorkerMethods, WorkerSpec as MirrorWorkerSpec } from "./mirror.worker";
 
 const log = electronLog.scope("console/workerInterface");
 const mirrorLog = electronLog.scope("mirrorManager");
@@ -13,7 +13,7 @@ const mirrorLog = electronLog.scope("mirrorManager");
 export const mirrorWorker: Promise<Thread & MirrorWorkerMethods> = new Promise((resolve, reject) => {
   log.debug("mirror: Spawning worker");
 
-  spawn<MirrorWorkerSpec>(new Worker("./mirrorWorker"), { timeout: 30000 })
+  spawn<MirrorWorkerSpec>(new Worker("./mirror.worker"), { timeout: 30000 })
     .then((worker) => {
       worker.getLogObservable().subscribe((logMessage) => {
         mirrorLog.info(logMessage);

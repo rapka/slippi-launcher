@@ -1,5 +1,5 @@
 import { ipc_calculateGameStats, ipc_loadProgressUpdatedEvent, ipc_loadReplayFolder } from "./endpoints";
-import { worker as replayBrowserWorker } from "./workerInterface";
+import { worker as replayBrowserWorker } from "./replays.worker.interface";
 
 ipc_loadReplayFolder.main!.handle(async ({ folderPath }) => {
   const w = await replayBrowserWorker;

@@ -6,7 +6,7 @@ import {
   ipc_startMirroring,
   ipc_stopDiscovery,
 } from "./endpoints";
-import { mirrorWorker } from "./workerInterface";
+import { mirrorWorker } from "./mirror.worker.interface";
 
 ipc_connectToConsoleMirror.main!.handle(async ({ config }) => {
   const mWorker = await mirrorWorker;

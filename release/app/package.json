@@ -14,7 +14,11 @@
     "postinstall": "yarn run electron-rebuild && yarn run link-modules"
   },
   "dependencies": {
-    "threads": "^1.6.5"
+    "threads": "^1.6.5",
+    "websocket": "^1.0.34"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/websocket": "^1.0.4"
+  }
 }

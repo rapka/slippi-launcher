@@ -1,7 +1,7 @@
 import { ConnectionEvent, ConnectionStatus, DolphinConnection, DolphinMessageType } from "@slippi/slippi-js";
 import { EventEmitter } from "events";
 import _ from "lodash";
-import { client as WebSocketClient, connection, IMessage } from "websocket";
+import { client as WebSocketClient, connection, Message } from "websocket";
 
 import { BroadcastEvent, SlippiBroadcastPayloadEvent, StartBroadcastConfig } from "./types";
 
@@ -86,9 +86,11 @@ export class BroadcastManager extends EventEmitter {
       try {
         await this._connectToDolphin(config.ip, config.port);
       } catch (err) {
-        const errMsg = err.message || JSON.stringify(err);
-        this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
-        this.emit(BroadcastEvent.LOG, errMsg);
+        if (err instanceof Error) {
+          const errMsg = err.message || JSON.stringify(err);
+          this.emit(BroadcastEvent.LOG, `Could not connect to Dolphin\n${errMsg}`);
+          this.emit(BroadcastEvent.LOG, errMsg);
+        }
         this.dolphinConnection.disconnect();
         throw err;
       }
@@ -199,7 +201,7 @@ export class BroadcastManager extends EventEmitter {
         }
       });
 
-      connection.on("message", (data: IMessage) => {
+      connection.on("message", (data: Message) => {
         if (data.type !== "utf8") {
           return;
         }
@@ -218,8 +220,10 @@ export class BroadcastManager extends EventEmitter {
             return;
           }
         } catch (err) {
-          const errMsg = err.message || JSON.stringify(err);
-          this.emit(BroadcastEvent.LOG, `Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
+          if (err instanceof Error) {
+            const errMsg = err.message || JSON.stringify(err);
+            this.emit(BroadcastEvent.LOG, `Failed to parse message from server\n${errMsg}\n${data.utf8Data}`);
+          }
           return;
         }
 
@@ -430,8 +434,10 @@ export class BroadcastManager extends EventEmitter {
               break;
             }
 
-            if (event["next_cursor"]) {
+            if ("next_cursor" in event) {
               this.nextGameCursor = event["next_cursor"];
+            } else {
+              this.nextGameCursor = event.nextCursor;
             }
 
             this.wsConnection.send(JSON.stringify(message), (err) => {

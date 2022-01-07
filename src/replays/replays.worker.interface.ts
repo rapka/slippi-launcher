@@ -2,14 +2,14 @@ import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
-import { Methods as WorkerMethods, WorkerSpec } from "./worker";
+import { Methods as WorkerMethods, WorkerSpec } from "./replays.worker";
 
 const log = electronLog.scope("replays/workerInterface");
 
 export const worker: Promise<Thread & WorkerMethods> = new Promise((resolve, reject) => {
   log.debug("replayBrowser: Spawning worker");
 
-  spawn<WorkerSpec>(new Worker("./worker"), { timeout: 30000 })
+  spawn<WorkerSpec>(new Worker("./replays.worker"), { timeout: 30000 })
     .then((worker) => {
       log.debug("replayBrowser: Spawning worker: Done");
 

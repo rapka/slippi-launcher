@@ -1,7 +1,8 @@
 import { settingsManager } from "@settings/settingsManager";
 
+import { broadcastWorker } from "./broadcast.worker.interface";
 import { ipc_refreshBroadcastList, ipc_startBroadcast, ipc_stopBroadcast, ipc_watchBroadcast } from "./endpoints";
-import { broadcastWorker, spectateWorker } from "./workerInterfaces";
+import { spectateWorker } from "./spectate.worker.interface";
 
 ipc_refreshBroadcastList.main!.handle(async ({ authToken }) => {
   const sWorker = await spectateWorker;
