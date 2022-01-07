@@ -1,6 +1,10 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  # Trigger the workflow on push or pull request
+  push:
+    branches:
+      - next
 
 jobs:
   release:
@@ -12,23 +16,22 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
-      - name: Install Node.js and NPM
+      - name: Install Node.js and yarn
         uses: actions/setup-node@v2
         with:
-          node-version: 16
-          cache: npm
+          node-version: '14'
+          cache: yarn
 
-      - name: npm install
+      - name: yarn install
         run: |
-          npm install
+          yarn install
 
-      - name: npm test
+      - name: yarn test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm run package
-          npm run lint
-          npm exec tsc
-          npm test
+          yarn run package
+          yarn run lint
+          yarn run test
