@@ -34,7 +34,6 @@ jobs:
         run: |
           yarn run package
           yarn run lint
-          yarn run test
       - name: Prepare artifacts
         shell: bash
         run: |
