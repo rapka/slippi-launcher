@@ -35,3 +35,13 @@ jobs:
           yarn run package
           yarn run lint
           yarn run test
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir artifacts
+          mv release/build/{*.exe*,*.deb,*.AppImage,*.dmg*,*.zip,*.yml} artifacts || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{matrix.os}}
+          path: artifacts
