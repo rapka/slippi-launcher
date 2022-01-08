@@ -1,8 +1,7 @@
-/* eslint-disable import/no-default-export */
 import { worker } from "./counter.worker.interface";
 import { ipc_counterUpdated, ipc_decrementCounter, ipc_incrementCounter } from "./endpoints";
 
-export default function installCounter() {
+export function installCounterIpc() {
   ipc_incrementCounter.main!.handle(async () => {
     const counterWorker = await worker;
     const res = await counterWorker.increment();

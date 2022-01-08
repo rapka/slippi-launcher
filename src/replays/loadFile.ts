@@ -1,5 +1,5 @@
+import { fileToDateAndTime } from "@common/time";
 import { GameStartType, MetadataType, SlippiGame } from "@slippi/slippi-js";
-import { fileToDateAndTime } from "common/time";
 import _ from "lodash";
 import path from "path";
 

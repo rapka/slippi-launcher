@@ -34,9 +34,12 @@ const methods: WorkerSpec = {
   },
   async loadSingleFile(filePath: string): Promise<FileResult> {
     const result = await loadFile(filePath);
+    console.log(filePath);
+    // return null as unknown as FileResult;
     return result;
   },
   async loadReplayFolder(folder: string): Promise<FileLoadResult> {
+    console.log(folder);
     const result = await loadFolder(folder, (current, total) => {
       progressSubject.next({ current, total });
     });
@@ -45,6 +48,7 @@ const methods: WorkerSpec = {
     progressSubject.complete();
     progressSubject = new Subject();
 
+    // return null as unknown as FileLoadResult;
     return result;
   },
   async calculateGameStats(fullPath: string): Promise<StatsType | null> {

@@ -15,6 +15,7 @@ const log = electronLog.scope("dolphin/utils");
 export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath?: string): Promise<string> {
   // Make sure the directory actually exists
   if (!dolphinPath) {
+    // eslint-disable-next-line no-param-reassign
     dolphinPath = settingsManager.getDolphinPath(type);
   }
 
