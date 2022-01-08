@@ -10,7 +10,7 @@ import { PrivateRoute } from "@/components/PrivateRoute";
 import { Console } from "@/containers/Console";
 import { Header } from "@/containers/Header";
 import { LoginDialog } from "@/containers/Header/LoginDialog";
-import { MenuItem } from "@/containers/Header/MainMenu";
+import type { MenuItem } from "@/containers/Header/MainMenu";
 import { Home } from "@/containers/Home";
 import { ReplayBrowserPage } from "@/containers/ReplayBrowser/ReplayBrowserPage";
 import { SpectatePage } from "@/containers/SpectatePage";

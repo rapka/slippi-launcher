@@ -2,10 +2,10 @@ import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
-import { Methods as BroadcastWorkerMethods, WorkerSpec as BroadcastWorkerSpec } from "./broadcast.worker";
+import type { Methods as BroadcastWorkerMethods, WorkerSpec as BroadcastWorkerSpec } from "./broadcast.worker";
 import {
   ipc_broadcastErrorOccurredEvent,
-  ipc_broadcastReconnect,
+  ipc_broadcastReconnectEvent,
   ipc_dolphinStatusChangedEvent,
   ipc_slippiStatusChangedEvent,
 } from "./endpoints";
@@ -33,7 +33,7 @@ export const broadcastWorker: Promise<Thread & BroadcastWorkerMethods> = new Pro
         ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(broadcastLog.error);
       });
       worker.getReconnectObservable().subscribe(({ config }) => {
-        ipc_broadcastReconnect.main!.trigger({ config }).catch(broadcastLog.error);
+        ipc_broadcastReconnectEvent.main!.trigger({ config }).catch(broadcastLog.error);
       });
 
       log.debug("broadcast: Spawning worker: Done");

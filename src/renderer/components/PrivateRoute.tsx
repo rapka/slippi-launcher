@@ -1,5 +1,6 @@
 import React from "react";
-import { Route, RouteProps } from "react-router-dom";
+import type { RouteProps } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 import { useAccount } from "@/lib/hooks/useAccount";
 

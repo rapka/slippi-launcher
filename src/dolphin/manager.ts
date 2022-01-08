@@ -8,7 +8,8 @@ import path from "path";
 
 import { downloadAndInstallDolphin } from "./downloadDolphin";
 import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
-import { DolphinLaunchType, ReplayCommunication } from "./types";
+import type { ReplayCommunication } from "./types";
+import { DolphinLaunchType } from "./types";
 
 const log = electronLog.scope("dolphin/manager");
 

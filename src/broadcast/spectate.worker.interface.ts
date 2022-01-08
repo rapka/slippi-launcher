@@ -1,12 +1,16 @@
 import { dolphinManager } from "@dolphin/manager";
-import { ReplayCommunication } from "@dolphin/types";
+import type { ReplayCommunication } from "@dolphin/types";
 import { app } from "electron";
 import electronLog from "electron-log";
 import { spawn, Thread, Worker } from "threads";
 
-import { ipc_broadcastErrorOccurredEvent, ipc_broadcastListUpdatedEvent, ipc_spectateReconnect } from "./endpoints";
-import { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } from "./spectate.worker";
-import { BroadcasterItem } from "./types";
+import {
+  ipc_broadcastErrorOccurredEvent,
+  ipc_broadcastListUpdatedEvent,
+  ipc_spectateReconnectEvent,
+} from "./endpoints";
+import type { Methods as SpectateWorkerMethods, WorkerSpec as SpectateWorkerSpec } from "./spectate.worker";
+import type { BroadcasterItem } from "./types";
 
 const log = electronLog.scope("broadcast/workerInterface");
 const spectateLog = electronLog.scope("spectateManager");
@@ -35,7 +39,7 @@ export const spectateWorker: Promise<Thread & SpectateWorkerMethods> = new Promi
         dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(spectateLog.error);
       });
       worker.getReconnectObservable().subscribe(() => {
-        ipc_spectateReconnect.main!.trigger({}).catch(spectateLog.error);
+        ipc_spectateReconnectEvent.main!.trigger({}).catch(spectateLog.error);
       });
 
       dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {

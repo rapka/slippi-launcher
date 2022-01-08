@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { PlayKey } from "@dolphin/types";
+import { colors } from "@common/colors";
+import type { PlayKey } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { colors } from "common/colors";
 import React from "react";
 
 import { UserIcon } from "@/components/UserIcon";

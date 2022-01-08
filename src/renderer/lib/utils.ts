@@ -1,17 +1,8 @@
 import { characters as charUtils } from "@slippi/slippi-js";
-import { isDevelopment } from "common/constants";
-import path from "path";
-import url from "url";
 
 // Fix static folder access in development. For more information see:
 // https://github.com/electron-userland/electron-webpack/issues/99#issuecomment-459251702
-export const getStatic = (val: string): string => {
-  if (isDevelopment) {
-    return url.resolve(window.location.origin, val);
-  }
-  // Escape the backslashes or they won't work as CSS background images
-  return path.resolve(path.join(__static, val)).replace(/\\/g, "/");
-};
+export const getStatic = window.electron.common.getAssetPath;
 
 export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
   if (characterId !== null) {

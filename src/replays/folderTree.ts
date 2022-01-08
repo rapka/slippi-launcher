@@ -1,6 +1,7 @@
-import { FolderResult } from "@replays/types";
 import * as fs from "fs-extra";
 import path from "path";
+
+import type { FolderResult } from "./types";
 
 export function findChild(tree: FolderResult, childToFind: string): FolderResult | null {
   const relativePath = path.relative(tree.fullPath, childToFind);

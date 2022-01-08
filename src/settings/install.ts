@@ -1,4 +1,5 @@
 import { addGamePathToInis } from "@dolphin/util";
+import { ipcMain } from "electron";
 import path from "path";
 
 import {
@@ -22,6 +23,11 @@ import { settingsManager } from "./settingsManager";
 // });
 
 export function installSettingsIpc() {
+  ipcMain.on("getAppSettingsSync", (event) => {
+    const settings = settingsManager.get();
+    event.returnValue = settings;
+  });
+
   ipc_setIsoPath.main!.handle(async ({ isoPath }) => {
     await settingsManager.setIsoPath(isoPath);
     if (isoPath) {

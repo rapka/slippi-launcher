@@ -1,15 +1,15 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
+import { IsoValidity } from "@common/types";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { colors } from "common/colors";
-import { ipc_checkValidIso } from "common/ipc";
-import { IsoValidity } from "common/types";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { useQuery } from "react-query";
 import { useToasts } from "react-toast-notifications";
 
 import { ConfirmationModal } from "@/components/ConfirmationModal";
@@ -59,13 +59,17 @@ const ErrorMessage = styled.div`
 
 export const IsoSelectionStep: React.FC = () => {
   const [tempIsoPath, setTempIsoPath] = React.useState("");
-  const verification = ipc_checkValidIso.renderer!.useValue(
-    { path: tempIsoPath },
-    { path: tempIsoPath, valid: IsoValidity.INVALID },
-  );
+  const validIsoPathQuery = useQuery(["validIsoPathQuery", tempIsoPath], async () => {
+    if (!tempIsoPath) {
+      return IsoValidity.INVALID;
+    }
+    return window.electron.common.checkValidIso(tempIsoPath);
+  });
+
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
-  const loading = verification.isUpdating;
+  const loading = validIsoPathQuery.isLoading;
+  const validIsoPath = validIsoPathQuery.data ?? IsoValidity.INVALID;
   const [, setIsoPath] = useIsoPath();
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -76,7 +80,6 @@ export const IsoSelectionStep: React.FC = () => {
     const filePath = acceptedFiles[0].path;
     setTempIsoPath(filePath);
   };
-  const validIsoPath = verification.value.valid;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     accept: [".iso", ".gcm"],
@@ -96,10 +99,10 @@ export const IsoSelectionStep: React.FC = () => {
 
   React.useEffect(() => {
     // Auto-confirm ISO if it's valid
-    if (verification.value.valid === IsoValidity.VALID) {
+    if (validIsoPath === IsoValidity.VALID) {
       onConfirm();
     }
-  }, [onConfirm, verification.value.valid]);
+  }, [onConfirm, validIsoPath]);
 
   return (
     <Box display="flex" flexDirection="column" flexGrow="1" maxWidth="800px" marginLeft="auto" marginRight="auto">

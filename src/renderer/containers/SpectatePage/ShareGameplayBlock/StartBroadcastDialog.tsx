@@ -16,15 +16,13 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import CloseIcon from "@material-ui/icons/Close";
 import ErrorIcon from "@material-ui/icons/Error";
 import HelpIcon from "@material-ui/icons/Help";
-import { clipboard } from "electron";
-import electronLog from "electron-log";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useQuery } from "react-query";
 
 import { validateUserId } from "@/lib/validateUserId";
 
-const log = electronLog.scope("StartBroadcastDialog");
+const log = console;
 export interface StartBroadcastDialogProps {
   open: boolean;
   onClose: () => void;
@@ -74,12 +72,22 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
     [fetchUser, skipUserValidation, userQuery],
   );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("submitting form...");
-    onSubmit(value);
-    onClose();
-  };
+  const handlePasteClick = React.useCallback(() => {
+    const text = window.electron.clipboard.readText();
+    if (text) {
+      handleChange(text);
+    }
+  }, [handleChange]);
+
+  const handleSubmit = React.useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      console.log("submitting form...");
+      onSubmit(value);
+      onClose();
+    },
+    [value, onClose, onSubmit],
+  );
 
   const showErrorStatus = value.length > 0 && userQuery.isError;
   if (showErrorStatus) {
@@ -121,15 +129,7 @@ export const StartBroadcastDialog: React.FC<StartBroadcastDialogProps> = ({
                     </Tooltip>
                   ) : (
                     <Tooltip title="Paste">
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          const text = clipboard.readText();
-                          if (text) {
-                            handleChange(text);
-                          }
-                        }}
-                      >
+                      <IconButton size="small" onClick={handlePasteClick}>
                         <AssignmentIcon />
                       </IconButton>
                     </Tooltip>

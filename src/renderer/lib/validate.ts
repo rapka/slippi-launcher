@@ -13,17 +13,17 @@ export const isValidIpAddress = (ip: string): boolean => {
 
 export const validateIpAndPort = (ip: string): string | true => {
   const ipPort = ip.split(":");
-  let port = "";
   if (ipPort.length !== 2) {
     return "No Port provided or missing colon (:)";
   }
-  [ip, port] = ipPort;
+
+  const [ipAddress, port] = ipPort;
 
   if (parseInt(port) < 1 || parseInt(port) > 65535) {
     return "Invalid Port";
   }
 
-  if (!isValidIpAddress(ip)) {
+  if (!isValidIpAddress(ipAddress)) {
     return "Invalid IP address";
   }
 

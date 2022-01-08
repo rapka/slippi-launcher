@@ -1,14 +1,14 @@
-import { ipc_loadReplayFolder } from "@replays/ipc";
-import { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
+import type { FileLoadResult, FileResult, FolderResult, Progress } from "@replays/types";
 import { produce } from "immer";
-import path from "path";
 import { useState } from "react";
 import create from "zustand";
 
 import { useSettings } from "@/lib/hooks/useSettings";
 
-import { findChild, generateSubFolderTree } from "../folderTree";
 import { useReplayBrowserList } from "./useReplayBrowserList";
+
+const path = window.electron.path;
+const { findChild, generateSubFolderTree, loadReplayFolder } = window.electron.replays;
 
 type StoreState = {
   loading: boolean;
@@ -225,12 +225,8 @@ export const useReplays = create<StoreState & StoreReducers>((set, get) => ({
 }));
 
 const handleReplayFolderLoading = async (folderPath: string): Promise<FileLoadResult> => {
-  const loadFolderResult = await ipc_loadReplayFolder.renderer!.trigger({ folderPath });
-  if (!loadFolderResult.result) {
-    console.error(`Error loading folder: ${folderPath}`, loadFolderResult.errors);
-    throw new Error(`Error loading folder: ${folderPath}`);
-  }
-  return loadFolderResult.result;
+  const loadFolderResult = await loadReplayFolder(folderPath);
+  return loadFolderResult;
 };
 
 export const useReplaySelection = () => {

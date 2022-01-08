@@ -1,6 +1,6 @@
-import { ipc_refreshBroadcastList } from "@broadcast/ipc";
-import { BroadcasterItem } from "@broadcast/types";
+import type { BroadcasterItem } from "@broadcast/types";
 import throttle from "lodash/throttle";
+import React from "react";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
@@ -23,16 +23,13 @@ export const useBroadcastList = () => {
   const items = useBroadcastListStore((store) => store.items);
   const { addToast } = useToasts();
 
-  const refresh = async () => {
+  const refresh = React.useCallback(async () => {
     if (!currentUser) {
       throw new Error("User is not logged in");
     }
     const authToken = await currentUser.getIdToken();
-    const broadcastListResult = await ipc_refreshBroadcastList.renderer!.trigger({ authToken });
-    if (!broadcastListResult.result) {
-      throw new Error("Error refreshing broadcast list");
-    }
-  };
+    await window.electron.broadcast.refreshBroadcastList(authToken);
+  }, [currentUser]);
 
   // Limit refreshing to once every 2 seconds
   const throttledRefresh = throttle(() => {

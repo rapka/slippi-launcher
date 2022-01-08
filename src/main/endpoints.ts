@@ -1,5 +1,7 @@
-import { _, EmptyPayload, makeEndpoint, SuccessPayload } from "../ipc";
-import { IsoValidity, NewsItem } from "./types";
+import type { IsoValidity, NewsItem } from "@common/types";
+
+import type { EmptyPayload, SuccessPayload } from "../ipc";
+import { _, makeEndpoint } from "../ipc";
 
 export const ipc_fetchNewsFeed = makeEndpoint.main("fetchNewsFeed", <EmptyPayload>_, <NewsItem[]>_);
 

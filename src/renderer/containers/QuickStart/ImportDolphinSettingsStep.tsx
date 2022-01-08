@@ -1,12 +1,11 @@
 /** @jsx jsx */
+import { isMac } from "@common/constants";
 import { DolphinLaunchType } from "@dolphin/types";
 import { css, jsx } from "@emotion/react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import { isMac } from "common/constants";
-import { ipc_deleteDesktopAppPath } from "common/ipc";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
@@ -43,7 +42,7 @@ export const ImportDolphinSettingsStep: React.FC = () => {
 
   const finishMigration = async () => {
     // delete desktop app path
-    await ipc_deleteDesktopAppPath.renderer!.trigger({});
+    await window.electron.common.deleteDesktopAppPath();
     setExists(false);
   };
 

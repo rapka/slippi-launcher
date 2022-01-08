@@ -1,4 +1,6 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
+import { isMac, slippiHomepage } from "@common/constants";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Box from "@material-ui/core/Box";
@@ -7,9 +9,6 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
-import { colors } from "common/colors";
-import { isMac, slippiHomepage } from "common/constants";
-import { shell } from "electron";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
 
@@ -24,7 +23,8 @@ import slippiLogo from "@/styles/images/slippi-logo.svg";
 import { platformTitleBarStyles } from "@/styles/platformTitleBarStyles";
 
 import { ActivateOnlineDialog } from "./ActivateOnlineDialog";
-import { MainMenu, MenuItem } from "./MainMenu";
+import type { MenuItem } from "./MainMenu";
+import { MainMenu } from "./MainMenu";
 import { StartGameDialog } from "./StartGameDialog";
 import { UserMenu } from "./UserMenu";
 
@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
       // Ensure the play key is saved to disk
       try {
         await assertPlayKey(playKey);
-      } catch (err) {
+      } catch (err: any) {
         handleError(err.message);
         return;
       }
@@ -100,7 +100,10 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
         `}
       >
         <Tooltip title="Open Slippi.gg">
-          <Button onClick={() => shell.openExternal(slippiHomepage)} style={isMac ? { marginTop: 10 } : undefined}>
+          <Button
+            onClick={() => window.electron.shell.openPath(slippiHomepage)}
+            style={isMac ? { marginTop: 10 } : undefined}
+          >
             <img src={slippiLogo} width="38px" />
           </Button>
         </Tooltip>

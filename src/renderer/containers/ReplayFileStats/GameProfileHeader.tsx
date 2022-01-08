@@ -1,4 +1,6 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
+import { extractPlayerNames } from "@common/matchNames";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -12,11 +14,9 @@ import LandscapeIcon from "@material-ui/icons/Landscape";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 import TimerIcon from "@material-ui/icons/Timer";
-import { FileResult } from "@replays/types";
-import { GameStartType, MetadataType, stages as stageUtils, StatsType } from "@slippi/slippi-js";
-import { colors } from "common/colors";
-import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
+import type { FileResult } from "@replays/types";
+import type { GameStartType, MetadataType, StatsType } from "@slippi/slippi-js";
+import { stages as stageUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -24,6 +24,8 @@ import React from "react";
 import { getStageImage } from "@/lib/utils";
 
 import { PlayerInfo } from "./PlayerInfo";
+
+const { convertFrameCountToDurationString, monthDayHourFormat } = window.electron.common.time;
 
 const Outer = styled.div`
   margin-top: 10px;

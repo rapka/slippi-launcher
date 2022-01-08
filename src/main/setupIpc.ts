@@ -5,6 +5,8 @@ import { installDolphinIpc } from "@dolphin/install";
 import { installReplaysIpc } from "@replays/install";
 import { installSettingsIpc } from "@settings/install";
 
+import { installMainIpc } from "./install";
+
 export function setupIpc() {
   installCounterIpc();
   installBroadcastIpc();
@@ -12,4 +14,5 @@ export function setupIpc() {
   installReplaysIpc();
   installSettingsIpc();
   installConsoleIpc();
+  installMainIpc();
 }

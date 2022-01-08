@@ -1,6 +1,6 @@
-import { FileResult } from "@replays/types";
+import { extractAllPlayerNames, namesMatch } from "@common/matchNames";
+import type { FileResult } from "@replays/types";
 import { Frames } from "@slippi/slippi-js";
-import { extractAllPlayerNames, namesMatch } from "common/matchNames";
 import compareFunc from "compare-func";
 
 // The minimum duration of games when filtering out short games

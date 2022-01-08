@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
@@ -9,10 +10,8 @@ import LandscapeIcon from "@material-ui/icons/Landscape";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import TimerIcon from "@material-ui/icons/Timer";
-import { FileResult } from "@replays/types";
+import type { FileResult } from "@replays/types";
 import { stages as stageUtils } from "@slippi/slippi-js";
-import { colors } from "common/colors";
-import { convertFrameCountToDurationString, monthDayHourFormat } from "common/time";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
@@ -22,6 +21,7 @@ import { getStageImage } from "@/lib/utils";
 
 import { TeamElements } from "./TeamElements";
 
+const { convertFrameCountToDurationString, monthDayHourFormat } = window.electron.common.time;
 export interface ReplayFileProps extends FileResult {
   index: number;
   style?: React.CSSProperties;

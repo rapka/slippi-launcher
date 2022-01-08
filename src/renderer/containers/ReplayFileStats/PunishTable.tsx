@@ -1,10 +1,9 @@
 /** @jsx jsx */
+import { extractPlayerNames } from "@common/matchNames";
 import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
-import { FileResult } from "@replays/types";
-import { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
-import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString } from "common/time";
+import type { FileResult } from "@replays/types";
+import type { ConversionType, PlayerType, StatsType, StockType } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
@@ -14,6 +13,7 @@ import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 import * as T from "./TableStyles";
 
 const columnCount = 6;
+const { convertFrameCountToDurationString } = window.electron.common.time;
 
 export interface PunishTableProps {
   file: FileResult;

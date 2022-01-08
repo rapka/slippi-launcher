@@ -1,20 +1,9 @@
 import { DolphinLaunchType } from "@dolphin/types";
-import {
-  ipc_setExtraSlpPaths,
-  ipc_setIsoPath,
-  ipc_setLaunchMeleeOnPlay,
-  ipc_setNetplayDolphinPath,
-  ipc_setPlaybackDolphinPath,
-  ipc_setRootSlpPath,
-  ipc_setSpectateSlpPath,
-  ipc_setUseMonthlySubfolders,
-} from "@settings/ipc";
-import { AppSettings } from "@settings/types";
-import { ipcRenderer } from "electron";
+import type { AppSettings } from "@settings/types";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-const initialState = ipcRenderer.sendSync("getAppSettingsSync") as AppSettings;
+const initialState = window.electron.settings.getAppSettingsSync();
 console.log("initial state: ", initialState);
 
 export const useSettings = create(
@@ -30,75 +19,40 @@ export const useSettings = create(
 
 export const useIsoPath = () => {
   const isoPath = useSettings((store) => store.settings.isoPath);
-  const setPath = async (isoPath: string | null) => {
-    const setResult = await ipc_setIsoPath.renderer!.trigger({ isoPath });
-    if (!setResult.result) {
-      throw new Error("Error setting ISO path");
-    }
-  };
+  const setPath = window.electron.settings.setIsoPath;
   return [isoPath, setPath] as const;
 };
 
 export const useRootSlpPath = () => {
   const rootSlpPath = useSettings((store) => store.settings.rootSlpPath);
-  const setReplayDir = async (path: string) => {
-    const setResult = await ipc_setRootSlpPath.renderer!.trigger({ path });
-    if (!setResult.result) {
-      throw new Error("Error setting root SLP path");
-    }
-  };
+  const setReplayDir = window.electron.settings.setRootSlpPath;
   return [rootSlpPath, setReplayDir] as const;
 };
 
 export const useMonthlySubfolders = () => {
   const useMonthlySubfolders = useSettings((store) => store.settings.useMonthlySubfolders);
-  const setUseMonthlySubfolders = async (toggle: boolean) => {
-    const setResult = await ipc_setUseMonthlySubfolders.renderer!.trigger({ toggle });
-    if (!setResult.result) {
-      throw new Error("Error setting use monthly subfolders");
-    }
-  };
+  const setUseMonthlySubfolders = window.electron.settings.setUseMonthlySubfolders;
   return [useMonthlySubfolders, setUseMonthlySubfolders] as const;
 };
 
 export const useSpectateSlpPath = () => {
   const spectateSlpPath = useSettings((store) => store.settings.spectateSlpPath);
-  const setSpectateDir = async (path: string) => {
-    const setResult = await ipc_setSpectateSlpPath.renderer!.trigger({ path });
-    if (!setResult.result) {
-      throw new Error("Error setting spectate SLP path");
-    }
-  };
+  const setSpectateDir = window.electron.settings.setSpectateSlpPath;
   return [spectateSlpPath, setSpectateDir] as const;
 };
 
 export const useExtraSlpPaths = () => {
   const extraSlpPaths = useSettings((store) => store.settings.extraSlpPaths);
-  const setExtraSlpDirs = async (paths: string[]) => {
-    const setResult = await ipc_setExtraSlpPaths.renderer!.trigger({ paths });
-    if (!setResult.result) {
-      throw new Error("Error setting extra SLP paths");
-    }
-  };
+  const setExtraSlpDirs = window.electron.settings.setExtraSlpPaths;
   return [extraSlpPaths, setExtraSlpDirs] as const;
 };
 
 export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
   const netplayDolphinPath = useSettings((store) => store.settings.netplayDolphinPath);
-  const setNetplayPath = async (path: string) => {
-    const setResult = await ipc_setNetplayDolphinPath.renderer!.trigger({ path });
-    if (!setResult.result) {
-      throw new Error("Error setting netplay dolphin path");
-    }
-  };
+  const setNetplayPath = window.electron.settings.setNetplayDolphinPath;
 
   const playbackDolphinPath = useSettings((store) => store.settings.playbackDolphinPath);
-  const setDolphinPath = async (path: string) => {
-    const setResult = await ipc_setPlaybackDolphinPath.renderer!.trigger({ path });
-    if (!setResult.result) {
-      throw new Error("Error setting playback dolphin path");
-    }
-  };
+  const setDolphinPath = window.electron.settings.setPlaybackDolphinPath;
 
   switch (dolphinType) {
     case DolphinLaunchType.NETPLAY: {
@@ -112,12 +66,6 @@ export const useDolphinPath = (dolphinType: DolphinLaunchType) => {
 
 export const useLaunchMeleeOnPlay = () => {
   const launchMeleeOnPlay = useSettings((store) => store.settings.launchMeleeOnPlay);
-  const setLaunchMelee = async (launchMelee: boolean) => {
-    const setResult = await ipc_setLaunchMeleeOnPlay.renderer!.trigger({ launchMelee });
-    if (!setResult.result) {
-      throw new Error("Error setting launch melee on Play");
-    }
-  };
-
+  const setLaunchMelee = window.electron.settings.setLaunchMeleeOnPlay;
   return [launchMeleeOnPlay, setLaunchMelee] as const;
 };

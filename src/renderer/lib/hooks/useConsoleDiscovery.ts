@@ -1,5 +1,5 @@
-import { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo } from "@console/types";
-import produce from "immer";
+import type { ConsoleMirrorStatusUpdate, DiscoveredConsoleInfo } from "@console/types";
+import { produce } from "immer";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -11,7 +11,8 @@ export const useConsoleDiscoveryStore = create(
     },
     (set) => ({
       updateConsoleItems: (consoleItems: DiscoveredConsoleInfo[]) => set({ consoleItems }),
-      updateConsoleStatus: (ip: string, info: Partial<ConsoleMirrorStatusUpdate>) =>
+      updateConsoleStatus: (data: { ip: string; info: Partial<ConsoleMirrorStatusUpdate> }) => {
+        const { ip, info } = data;
         set((state) =>
           produce(state, (draft) => {
             const existing = draft.connectedConsoles[ip];
@@ -32,7 +33,8 @@ export const useConsoleDiscoveryStore = create(
               draft.connectedConsoles[ip].nintendontVersion = info.nintendontVersion;
             }
           }),
-        ),
+        );
+      },
     }),
   ),
 );

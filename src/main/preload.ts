@@ -1,13 +1,48 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
+import type { IpcRendererEvent } from "electron";
+import { clipboard, contextBridge, dialog, ipcRenderer, shell } from "electron";
+import path from "path";
 
+import broadcast from "../broadcast/api";
+import console from "../console/api";
 import counter from "../counter/api";
+import dolphin from "../dolphin/api";
+import replays from "../replays/api";
+import settings from "../settings/api";
+import common from "./api";
 
 type IpcEventListener = (event: IpcRendererEvent, ...args: any[]) => void;
 
 const validChannels = ["ipc-example", "counter-changed"];
 
 const api = {
+  common,
+  console,
+  settings,
+  broadcast,
+  dolphin,
   counter,
+  replays,
+  path: {
+    sep: path.sep,
+    basename: path.basename,
+    resolve: path.resolve,
+    relative: path.relative,
+    join: path.join,
+  },
+  clipboard: {
+    writeText: clipboard.writeText,
+    readText: clipboard.readText,
+  },
+  shell: {
+    openPath: shell.openPath,
+    showItemInFolder: shell.showItemInFolder,
+    trashItem: shell.trashItem,
+  },
+  dialog: {
+    showOpenDialog: async (options: Electron.OpenDialogOptions) => {
+      return await dialog.showOpenDialog(options);
+    },
+  },
   ipcRenderer: {
     myPing() {
       ipcRenderer.send("ipc-example", "ping");

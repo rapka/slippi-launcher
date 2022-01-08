@@ -1,9 +1,8 @@
 /** @jsx jsx */
-import { ipc_startDiscovery, ipc_stopDiscovery } from "@console/ipc";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import AddIcon from "@material-ui/icons/Add";
-import { StoredConnection } from "@settings/types";
+import type { StoredConnection } from "@settings/types";
 import { ConnectionStatus } from "@slippi/slippi-js";
 import React from "react";
 import { useToasts } from "react-toast-notifications";
@@ -11,12 +10,8 @@ import { useToasts } from "react-toast-notifications";
 import { DualPane } from "@/components/DualPane";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/FormInputs";
-import {
-  addConsoleConnection,
-  deleteConsoleConnection,
-  EditConnectionType,
-  editConsoleConnection,
-} from "@/lib/consoleConnection";
+import type { EditConnectionType } from "@/lib/consoleConnection";
+import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/consoleConnection";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/useConsoleDiscovery";
 import { useSettings } from "@/lib/hooks/useSettings";
 
@@ -57,8 +52,8 @@ export const Console: React.FC = () => {
   React.useEffect(() => {
     // Start scanning for new consoles
     setIsScanning(false);
-    ipc_startDiscovery
-      .renderer!.trigger({})
+    window.electron.console
+      .startDiscovery()
       .then(() => setIsScanning(true))
       .catch((err) => {
         addToast(err.message ?? JSON.stringify(err), { appearance: "error" });
@@ -66,7 +61,7 @@ export const Console: React.FC = () => {
 
     // Stop scanning on component unmount
     return () => {
-      void ipc_stopDiscovery.renderer!.trigger({});
+      void window.electron.console.stopDiscovery();
     };
   }, [addToast]);
 

@@ -1,21 +1,14 @@
 /** @jsx jsx */
+import { extractPlayerNames } from "@common/matchNames";
 import { css, jsx } from "@emotion/react";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import { FileResult } from "@replays/types";
-import {
-  animations as animationUtils,
-  Frames,
-  moves as moveUtils,
-  PlayerType,
-  StatsType,
-  StockType,
-} from "@slippi/slippi-js";
-import { extractPlayerNames } from "common/matchNames";
-import { convertFrameCountToDurationString } from "common/time";
+import type { FileResult } from "@replays/types";
+import type { PlayerType, StatsType, StockType } from "@slippi/slippi-js";
+import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
 import _ from "lodash";
 import React from "react";
 
@@ -24,6 +17,7 @@ import { getCharacterIcon } from "@/lib/utils";
 
 import * as T from "./TableStyles";
 
+const { convertFrameCountToDurationString } = window.electron.common.time;
 const columnCount = 5;
 export interface KillTableProps {
   file: FileResult;

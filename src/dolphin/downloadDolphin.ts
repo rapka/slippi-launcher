@@ -1,6 +1,7 @@
 import { isLinux } from "@common/constants";
 import AdmZip from "adm-zip";
-import { ChildProcessWithoutNullStreams, spawn, spawnSync } from "child_process";
+import type { ChildProcessWithoutNullStreams } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import { app, BrowserWindow } from "electron";
 import { download } from "electron-dl";
 import extractDmg from "extract-dmg";

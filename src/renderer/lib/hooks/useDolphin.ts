@@ -1,19 +1,11 @@
-import {
-  ipc_clearDolphinCache,
-  ipc_configureDolphin,
-  ipc_importDolphinSettings,
-  ipc_launchNetplayDolphin,
-  ipc_reinstallDolphin,
-  ipc_viewSlpReplay,
-} from "@dolphin/ipc";
-import { DolphinLaunchType, ReplayQueueItem } from "@dolphin/types";
-import electronLog from "electron-log";
-import { MainEndpointResponse } from "ipc";
+import type { ReplayQueueItem } from "@dolphin/types";
+import { DolphinLaunchType } from "@dolphin/types";
+import React from "react";
 import { useToasts } from "react-toast-notifications";
 import create from "zustand";
 import { combine } from "zustand/middleware";
 
-const log = electronLog.scope("useDolphin");
+const log = console;
 
 export const useDolphinStore = create(
   combine(
@@ -36,60 +28,86 @@ export const useDolphinStore = create(
 export const useDolphin = () => {
   const { addToast } = useToasts();
   const setDolphinOpen = useDolphinStore((store) => store.setDolphinOpen);
+  const handleError = React.useCallback(
+    (errMessage: string) => {
+      addToast(errMessage, { appearance: "error" });
+    },
+    [addToast],
+  );
 
-  const handleResult = <T>(res: MainEndpointResponse<T>, errLog: string): boolean => {
-    try {
-      if (!res.result) {
-        log.error(errLog, res.errors);
-        throw new Error(errLog);
+  const openConfigureDolphin = React.useCallback(
+    async (dolphinType: DolphinLaunchType) => {
+      try {
+        await window.electron.dolphin.configureDolphin(dolphinType);
+        setDolphinOpen(dolphinType);
+      } catch (err) {
+        log.error(err);
+        handleError(`Error launching ${dolphinType} Dolphin`);
       }
-    } catch (err: unknown) {
-      addToast(err instanceof Error ? err.message : JSON.stringify(err), {
-        appearance: "error",
-      });
-      return false;
-    }
-    return true;
-  };
+    },
+    [handleError, setDolphinOpen],
+  );
 
-  const openConfigureDolphin = async (dolphinType: DolphinLaunchType) => {
-    const configureResult = await ipc_configureDolphin.renderer!.trigger({ dolphinType });
-    const success = handleResult(configureResult, `Error launching ${dolphinType} Dolphin`);
-    if (success) {
-      setDolphinOpen(dolphinType);
-    }
-  };
-  const clearDolphinCache = async (dolphinType: DolphinLaunchType) => {
-    const clearCacheResult = await ipc_clearDolphinCache.renderer!.trigger({ dolphinType });
-    handleResult(clearCacheResult, `Error clearing ${dolphinType} Dolphin cache`);
-  };
-  const reinstallDolphin = async (dolphinType: DolphinLaunchType) => {
-    const reinstallResult = await ipc_reinstallDolphin.renderer!.trigger({ dolphinType });
-    handleResult(reinstallResult, `Error reinstalling netplay Dolphin`);
-  };
-  const launchNetplay = async (bootToCss: boolean) => {
-    const launchResult = await ipc_launchNetplayDolphin.renderer!.trigger({ bootToCss });
-    const success = handleResult(launchResult, `Error launching netplay Dolphin`);
-    if (success) {
-      setDolphinOpen(DolphinLaunchType.NETPLAY);
-    }
-  };
+  const clearDolphinCache = React.useCallback(
+    async (dolphinType: DolphinLaunchType) => {
+      try {
+        await window.electron.dolphin.clearDolphinCache(dolphinType);
+      } catch (err) {
+        log.error(err);
+        handleError(`Error clearing ${dolphinType} Dolphin cache`);
+      }
+    },
+    [handleError],
+  );
 
-  const viewReplays = async (files: ReplayQueueItem[]) => {
-    const viewResult = await ipc_viewSlpReplay.renderer!.trigger({ files });
-    const success = handleResult(viewResult, `Error playing file(s): ${files.join(", ")}`);
-    if (success) {
-      setDolphinOpen(DolphinLaunchType.PLAYBACK);
-    }
-  };
+  const reinstallDolphin = React.useCallback(
+    async (dolphinType: DolphinLaunchType) => {
+      try {
+        await window.electron.dolphin.reinstallDolphin(dolphinType);
+      } catch (err) {
+        log.error(err);
+        handleError("Error reinstalling netplay Dolphin");
+      }
+    },
+    [handleError],
+  );
 
-  const importDolphin = async (toImportDolphinPath: string, dolphinType: DolphinLaunchType) => {
-    const importResult = await ipc_importDolphinSettings.renderer!.trigger({ toImportDolphinPath, dolphinType });
-    const success = handleResult(importResult, `Error importing ${dolphinType} dolphin settings`);
-    if (success) {
-      addToast(`${dolphinType} Dolphin settings successfully imported`, { appearance: "success" });
-    }
-  };
+  const launchNetplay = React.useCallback(
+    async (bootToCss?: boolean) => {
+      try {
+        await window.electron.dolphin.launchNetplayDolphin({ bootToCss });
+        setDolphinOpen(DolphinLaunchType.NETPLAY);
+      } catch (err) {
+        log.error(err);
+        handleError("Error launching netplay Dolphin");
+      }
+    },
+    [setDolphinOpen, handleError],
+  );
+
+  const viewReplays = React.useCallback(
+    async (files: ReplayQueueItem[]) => {
+      try {
+        await window.electron.dolphin.viewSlpReplay(files);
+        setDolphinOpen(DolphinLaunchType.PLAYBACK);
+      } catch (err) {
+        handleError(`Error playing file(s): ${files.join(", ")}`);
+      }
+    },
+    [setDolphinOpen, handleError],
+  );
+
+  const importDolphin = React.useCallback(
+    async (toImportDolphinPath: string, dolphinType: DolphinLaunchType) => {
+      try {
+        await window.electron.dolphin.importDolphinSettings({ dolphinType, toImportDolphinPath });
+        addToast(`${dolphinType} Dolphin settings successfully imported`, { appearance: "success" });
+      } catch (err) {
+        handleError(`Error importing ${dolphinType} dolphin settings`);
+      }
+    },
+    [addToast, handleError],
+  );
 
   return {
     openConfigureDolphin: (dolphinType: DolphinLaunchType) => void openConfigureDolphin(dolphinType),

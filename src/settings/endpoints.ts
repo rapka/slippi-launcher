@@ -1,5 +1,6 @@
-import { _, makeEndpoint, SuccessPayload } from "../ipc";
-import { AppSettings, StoredConnection } from "./types";
+import type { EmptyPayload, SuccessPayload } from "../ipc";
+import { _, makeEndpoint } from "../ipc";
+import type { AppSettings, StoredConnection } from "./types";
 
 // Handlers
 
@@ -53,4 +54,4 @@ export const ipc_deleteConnection = makeEndpoint.main("deleteConnection", <{ id:
 
 export const ipc_settingsUpdatedEvent = makeEndpoint.renderer("settings_settingsUpdated", <AppSettings>_);
 
-export const ipc_openSettingsModalEvent = makeEndpoint.renderer("openSettingsModal", <Record<string, never>>_);
+export const ipc_openSettingsPageRequestedEvent = makeEndpoint.renderer("openSettingsModal", <EmptyPayload>_);

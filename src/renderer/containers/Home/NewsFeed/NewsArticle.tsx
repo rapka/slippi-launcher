@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import type { NewsItem } from "@common/types";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
@@ -8,8 +9,6 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import { NewsItem } from "common/types";
-import { shell } from "electron";
 import moment from "moment";
 import React from "react";
 import TimeAgo from "react-timeago";
@@ -24,7 +23,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ item }) => {
   const { imageUrl, title, subtitle, permalink, body, publishedAt } = item;
   const localDateString = moment(publishedAt).format("LLL");
 
-  const onClick = () => shell.openExternal(permalink);
+  const onClick = () => window.electron.shell.openPath(permalink);
   return (
     <Outer>
       <Card>

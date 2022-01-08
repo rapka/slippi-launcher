@@ -1,11 +1,10 @@
 import { DolphinLaunchType } from "@dolphin/types";
-import React from "react";
 
 import { DolphinSettings } from "./DolphinSettings";
 import { HelpPage } from "./HelpPage";
 import { MeleeOptions } from "./MeleeOptions";
 import { ReplayOptions } from "./ReplayOptions";
-import { SettingSection } from "./types";
+import type { SettingSection } from "./types";
 
 export const settings: SettingSection[] = [
   {

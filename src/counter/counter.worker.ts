@@ -3,7 +3,7 @@
 // when in Node worker context.
 
 import { delay } from "@common/delay";
-import { ModuleMethods } from "threads/dist/types/master";
+import type { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
 let currentCount = 0;

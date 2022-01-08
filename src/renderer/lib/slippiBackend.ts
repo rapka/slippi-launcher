@@ -1,11 +1,7 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
-import { ipc_checkPlayKeyExists, ipc_removePlayKeyFile, ipc_storePlayKeyFile } from "@dolphin/ipc";
-import { PlayKey } from "@dolphin/types";
-import electronLog from "electron-log";
+import type { PlayKey } from "@dolphin/types";
 import firebase from "firebase";
-import { GraphQLError } from "graphql";
-
-const log = electronLog.scope("slippiBackend");
+import type { GraphQLError } from "graphql";
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
 
@@ -114,29 +110,16 @@ export async function fetchPlayKey(): Promise<PlayKey> {
 }
 
 export async function assertPlayKey(playKey: PlayKey) {
-  const playKeyExistsResult = await ipc_checkPlayKeyExists.renderer!.trigger({});
-  if (!playKeyExistsResult.result) {
-    log.error("Error checking for play key.", playKeyExistsResult.errors);
-    throw new Error("Error checking for play key");
-  }
-
-  if (playKeyExistsResult.result.exists) {
+  const playKeyExists = await window.electron.dolphin.checkPlayKeyExists();
+  if (playKeyExists) {
     return;
   }
 
-  const storeResult = await ipc_storePlayKeyFile.renderer!.trigger({ key: playKey });
-  if (!storeResult.result) {
-    log.error("Error saving play key", storeResult.errors);
-    throw new Error("Error saving play key");
-  }
+  await window.electron.dolphin.storePlayKeyFile(playKey);
 }
 
 export async function deletePlayKey(): Promise<void> {
-  const deleteResult = await ipc_removePlayKeyFile.renderer!.trigger({});
-  if (!deleteResult.result) {
-    log.error("Error deleting play key", deleteResult.errors);
-    throw new Error("Error deleting play key");
-  }
+  await window.electron.dolphin.removePlayKeyFile();
 }
 
 export async function changeDisplayName(name: string) {
