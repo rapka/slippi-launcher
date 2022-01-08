@@ -2,6 +2,7 @@
 // fails to obtain the paths required for file transport to work
 // when in Node worker context.
 
+import { delay } from "@common/delay";
 import { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
@@ -25,11 +26,13 @@ const methods: WorkerSpec = {
     return currentCount;
   },
   async increment() {
+    await delay(10);
     currentCount += 1;
     console.log(`incremented count: ${currentCount}`);
     return currentCount;
   },
   async decrement() {
+    await delay(10);
     currentCount -= 1;
     console.log(`decremented count: ${currentCount}`);
     return currentCount;
