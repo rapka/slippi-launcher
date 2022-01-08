@@ -6326,7 +6326,7 @@ events@^3.2.0:
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
-execa@^4.0.0:
+execa@^4.0.0, execa@^4.0.2:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/execa/-/execa-4.1.0.tgz#4e5491ad1572f2f17a77d388c6c857135b22847a"
   integrity sha512-j5W0//W7f8UxAn8hXVnwG8tLwdiUy4FJLcSupCg6maBYZDpyBvTApK7KyuI4bKj8KOh1r2YH+6ucuYtJv1bTZA==
@@ -8836,10 +8836,10 @@ lzma-native@^8.0.1:
     node-gyp-build "^4.2.1"
     readable-stream "^3.6.0"
 
-macos-release@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/macos-release/-/macos-release-3.0.1.tgz#7d2a1329a616297db4a57f3d3ba8fa07a7caadd6"
-  integrity sha512-3l6OrhdDg2H2SigtuN3jBh+5dRJRWxNKuJTPBbGeNJTsmt/pj9PO25wYaNb05NuNmAsl435j4rDP6rgNXz7s7g==
+macos-release@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/macos-release/-/macos-release-2.5.0.tgz#067c2c88b5f3fb3c56a375b2ec93826220fa1ff2"
+  integrity sha512-EIgv+QZ9r+814gjJj0Bt5vSLJLzswGmSUbUpbi9AIr/fsN2IWFBl2NucV9PAiek+U1STK468tEkxmVYUtuAN3g==
 
 make-dir@^3.0.0:
   version "3.1.0"
@@ -9586,13 +9586,13 @@ ora@^5.1.0:
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
 
-os-name@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/os-name/-/os-name-5.0.1.tgz#acb4f996ec5bd86c41755fef9d6d31905c47172e"
-  integrity sha512-0EQpaHUHq7olp2/YFUr+0vZi9tMpDTblHGz+Ch5RntKxiRXOAY0JOz1UlxhSjMSksHvkm13eD6elJj3M8Ht/kw==
+os-name@^4.0.0:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/os-name/-/os-name-4.0.1.tgz#32cee7823de85a8897647ba4d76db46bf845e555"
+  integrity sha512-xl9MAoU97MH1Xt5K9ERft2YfCAoaO6msy1OBA0ozxEC0x0TmIoE6K3QvgJMMZA9yKGLmHXNY/YZoDbiGDj4zYw==
   dependencies:
-    macos-release "^3.0.1"
-    windows-release "^5.0.1"
+    macos-release "^2.5.0"
+    windows-release "^4.0.0"
 
 ow@^0.16.0:
   version "0.16.0"
@@ -12625,12 +12625,12 @@ wildcard@^2.0.0:
   resolved "https://registry.yarnpkg.com/wildcard/-/wildcard-2.0.0.tgz#a77d20e5200c6faaac979e4b3aadc7b3dd7f8fec"
   integrity sha512-JcKqAHLPxcdb9KM49dufGXn2x3ssnfjbcaQdLlfZsL9rH9wgDQjUtDxbo8NE0F6SFvydeu1VhZe7hZuHsB2/pw==
 
-windows-release@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/windows-release/-/windows-release-5.0.1.tgz#d1f7cd1f25660ba05cac6359711844dce909a8ed"
-  integrity sha512-y1xFdFvdMiDXI3xiOhMbJwt1Y7dUxidha0CWPs1NgjZIjZANTcX7+7bMqNjuezhzb8s5JGEiBAbQjQQYYy7ulw==
+windows-release@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/windows-release/-/windows-release-4.0.0.tgz#4725ec70217d1bf6e02c7772413b29cdde9ec377"
+  integrity sha512-OxmV4wzDKB1x7AZaZgXMVsdJ1qER1ed83ZrTYd5Bwq2HfJVg3DJS8nqlAG4sMoJ7mu8cuRmLEYyU13BKwctRAg==
   dependencies:
-    execa "^5.1.1"
+    execa "^4.0.2"
 
 word-wrap@^1.2.3, word-wrap@~1.2.3:
   version "1.2.3"

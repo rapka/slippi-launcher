@@ -15,7 +15,6 @@ import {
   ipc_launcherUpdateReadyEvent,
 } from "./endpoints";
 import * as time from "./time";
-import { getAssetPath } from "./util";
 
 export default {
   time,
@@ -25,7 +24,9 @@ export default {
   onDragState(filePaths: string[]) {
     ipcRenderer.send("onDragStart", filePaths);
   },
-  getAssetPath,
+  getAssetPath(...paths: string[]) {
+    return ipcRenderer.sendSync("getAssetPathSync", paths) as string;
+  },
   async checkForAppUpdates(): Promise<void> {
     await ipc_checkForUpdate.renderer!.trigger({});
   },
