@@ -12,16 +12,18 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+import installBroadcast from "@broadcast/install";
+import installCounter from "@counter/install";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 
-import installCounter from "../counter/install";
 import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 
 installCounter();
+installBroadcast();
 
 class AppUpdater {
   public constructor() {

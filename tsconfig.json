@@ -10,7 +10,8 @@
       "@dolphin/*": ["dolphin/*"],
       "@replays/*": ["replays/*"],
       "@settings/*": ["settings/*"],
-      "@console/*": ["console/*"]
+      "@console/*": ["console/*"],
+      "@counter/*": ["counter/*"]
     },
     "declaration": true,
     "declarationMap": true,
