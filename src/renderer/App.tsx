@@ -1,66 +1,75 @@
-/* eslint-disable import/no-default-export */
-import "./App.global.scss";
+import "./styles/styles.scss";
 
+import { ThemeProvider } from "@emotion/react";
+import { MuiThemeProvider, StylesProvider } from "@material-ui/core/styles";
 import React from "react";
-import { MemoryRouter as Router, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
+import { ToastProvider } from "react-toast-notifications";
 
-import icon, { ReactComponent as LogoIcon } from "../../assets/icon.svg";
+import { useAppStore } from "@/lib/hooks/useApp";
 
-const Hello = () => {
-  const [counter, setCounter] = React.useState(0);
+import { CustomToast } from "./components/CustomToast";
+import { useAppListeners } from "./lib/hooks/useAppListeners";
+import { slippiTheme } from "./styles/theme";
+import { LandingView } from "./views/LandingView";
+import { LoadingView } from "./views/LoadingView";
+import { MainView } from "./views/MainView";
+import { NotFoundView } from "./views/NotFoundView";
+import { SettingsView } from "./views/SettingsView";
 
-  React.useEffect(() => {
-    return window.electron.counter.onCounterChange((val: number) => {
-      console.log(`received counter changed event from main. value: ${val}`);
-      setCounter(val);
-    });
-  });
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchIntervalInBackground: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchInterval: false,
+      retry: false,
+    },
+  },
+});
 
-  React.useEffect(() => {
-    return window.electron.ipcRenderer.on("ipc-example", (arg: any) => {
-      console.log(arg);
-    });
-  });
+const App: React.FC = () => {
+  const initialized = useAppStore((state) => state.initialized);
 
-  const onPingClick = () => window.electron.ipcRenderer.myPing();
-  const incrementCounter = () => {
-    console.log("inc counter button pressed");
-    window.electron.counter.incrementCounter().catch(console.error);
-  };
-  const decrementCounter = () => {
-    console.log("dec counter button pressed");
-    window.electron.counter.decrementCounter().catch(console.error);
-  };
+  // Then add the rest of the app listeners
+  useAppListeners();
+
+  if (!initialized) {
+    return <LoadingView />;
+  }
 
   return (
-    <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
-        <LogoIcon />
-      </div>
-      <h1>Hello world!</h1>
-      <div className="Hello">
-        <button type="button" onClick={onPingClick}>
-          Ping IPC
-        </button>
-      </div>
-      <h1>Counter: {counter}</h1>
-      <button type="button" onClick={incrementCounter}>
-        inc
-      </button>
-      <button type="button" onClick={decrementCounter}>
-        dec
-      </button>
-    </div>
+    <Routes>
+      <Route path="/main" element={<MainView />} />
+      <Route path="/landing" element={<LandingView />} />
+      <Route path="/settings" element={<SettingsView />} />
+      <Route path="/" element={<Navigate replace to="/landing" />} />
+      <Route element={<NotFoundView />} />
+    </Routes>
   );
 };
 
-export default function App() {
+// Providers need to be initialized before the rest of the app can use them
+const AppWithProviders: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
+    <StylesProvider injectFirst>
+      <MuiThemeProvider theme={slippiTheme}>
+        <ThemeProvider theme={slippiTheme}>
+          <QueryClientProvider client={queryClient}>
+            <ToastProvider components={{ Toast: CustomToast }} placement="bottom-right">
+              <Router>
+                <App />
+              </Router>
+            </ToastProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </MuiThemeProvider>
+    </StylesProvider>
   );
-}
+};
+
+// eslint-disable-next-line import/no-default-export
+export default AppWithProviders;
