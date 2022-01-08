@@ -260,6 +260,7 @@ export class Section {
   public getLines(removeComments: boolean): string[] {
     const lines: string[] = [];
     this.lines.forEach((line) => {
+      // eslint-disable-next-line no-param-reassign
       line = line.trim();
       if (removeComments) {
         const commentPos = line.indexOf("#");
@@ -267,6 +268,7 @@ export class Section {
           return;
         }
         if (commentPos !== -1) {
+          // eslint-disable-next-line no-param-reassign
           line = line.substring(0, commentPos);
         }
       }

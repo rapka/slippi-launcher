@@ -37,6 +37,7 @@ export function loadGeckoCodes(globalIni: IniFile, localIni?: IniFile): GeckoCod
           if (gcode.name.length > 0) {
             gcodes.push(gcode);
           }
+          // eslint-disable-next-line no-param-reassign
           line = line.slice(1); // cut out the $
 
           const creatorMatch = line.match(/\[(.*?)\]/); // searches for brackets, catches anything inside them
