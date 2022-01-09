@@ -184,9 +184,5 @@
       "pre-commit": "pretty-quick --staged",
       "pre-push": "yarn lint --quiet"
     }
-  },
-  "resolutions": {
-    "bufferutil": "4.0.3",
-    "utf-8-validate": "5.0.6"
   }
 }
