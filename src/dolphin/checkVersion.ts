@@ -1,16 +1,44 @@
-import { ApolloClient, gql, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
+import { RetryLink } from "@apollo/client/link/retry";
 import { isDevelopment } from "common/constants";
 import { fetch } from "cross-fetch";
+import electronLog from "electron-log";
 import { GraphQLError } from "graphql";
 
 import { DolphinLaunchType, DolphinVersionResponse } from "./types";
 
+const log = electronLog.scope("dolphin/checkVersion");
+
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT, fetch });
+const retryLink = new RetryLink({
+  delay: {
+    initial: 300,
+    max: Infinity,
+    jitter: true,
+  },
+  attempts: {
+    max: 5,
+    retryIf: (error, _operation) => !!error,
+  },
+});
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.map(({ message, locations, path }) =>
+      log.error(`Apollo GQL Error: Message: ${message}, Location: ${locations}, Path: ${path}`),
+    );
+  }
+  if (networkError) {
+    log.error(`Apollo Network Error: ${networkError}`);
+  }
+});
+
+const apolloLink = ApolloLink.from([errorLink, retryLink, httpLink]);
 
 const appVersion = __VERSION__;
 
 const client = new ApolloClient({
-  link: httpLink,
+  link: apolloLink,
   cache: new InMemoryCache(),
   name: "slippi-launcher",
   version: `${appVersion}${isDevelopment ? "-dev" : ""}`,

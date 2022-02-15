@@ -1,4 +1,7 @@
 import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { onError } from "@apollo/client/link/error";
+import { RetryLink } from "@apollo/client/link/retry";
 import { ipc_checkPlayKeyExists, ipc_removePlayKeyFile, ipc_storePlayKeyFile } from "@dolphin/ipc";
 import { PlayKey } from "@dolphin/types";
 import { isDevelopment } from "common/constants";
@@ -9,11 +12,49 @@ import { GraphQLError } from "graphql";
 const log = electronLog.scope("slippiBackend");
 
 const httpLink = new HttpLink({ uri: process.env.SLIPPI_GRAPHQL_ENDPOINT });
+const authLink = setContext(async () => {
+  // The firebase ID token expires after 1 hour so we will update the header on all actions
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    log.error("User is not logged in...");
+  }
+
+  const token = user ? await user.getIdToken() : null;
+
+  return {
+    headers: {
+      authorization: token ? `Bearer ${token}` : undefined,
+    },
+  };
+});
+const retryLink = new RetryLink({
+  delay: {
+    initial: 300,
+    max: Infinity,
+    jitter: true,
+  },
+  attempts: {
+    max: 5,
+    retryIf: (error) => !!error,
+  },
+});
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.map(({ message, locations, path }) =>
+      log.error(`Apollo GQL Error: Message: ${message}, Location: ${locations}, Path: ${path}`),
+    );
+  }
+  if (networkError) {
+    log.error(`Apollo Network Error: ${networkError}`);
+  }
+});
+
+const apolloLink = ApolloLink.from([authLink, errorLink, retryLink, httpLink]);
 
 const appVersion = __VERSION__;
 
 const client = new ApolloClient({
-  link: httpLink,
+  link: apolloLink,
   cache: new InMemoryCache(),
   name: "slippi-launcher",
   version: `${appVersion}${isDevelopment ? "-dev" : ""}`,
@@ -62,33 +103,11 @@ const handleErrors = (errors: readonly GraphQLError[] | undefined) => {
   }
 };
 
-// The firebase ID token expires after 1 hour so we will refresh it for actions that require it.
-async function refreshFirebaseAuth(): Promise<firebase.User> {
+export async function fetchPlayKey(): Promise<PlayKey> {
   const user = firebase.auth().currentUser;
   if (!user) {
     throw new Error("User is not logged in.");
   }
-
-  const token = await user.getIdToken();
-
-  const authLink = new ApolloLink((operation, forward) => {
-    // Use the setContext method to set the HTTP headers.
-    operation.setContext({
-      headers: {
-        authorization: token ? `Bearer ${token}` : "",
-      },
-    });
-
-    // Call the next link in the middleware chain.
-    return forward(operation);
-  });
-  client.setLink(authLink.concat(httpLink));
-
-  return user;
-}
-
-export async function fetchPlayKey(): Promise<PlayKey> {
-  const user = await refreshFirebaseAuth();
 
   const res = await client.query({
     query: getUserKeyQuery,
@@ -136,7 +155,10 @@ export async function deletePlayKey(): Promise<void> {
 }
 
 export async function changeDisplayName(name: string) {
-  const user = await refreshFirebaseAuth();
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    throw new Error("User is not logged in.");
+  }
 
   const res = await client.mutate({ mutation: renameUserMutation, variables: { fbUid: user.uid, displayName: name } });
 
@@ -150,8 +172,6 @@ export async function changeDisplayName(name: string) {
 }
 
 export async function initNetplay(codeStart: string): Promise<void> {
-  await refreshFirebaseAuth();
-
   const res = await client.mutate({ mutation: initNetplayMutation, variables: { codeStart } });
   handleErrors(res.errors);
 }
