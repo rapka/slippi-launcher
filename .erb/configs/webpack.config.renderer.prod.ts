@@ -14,7 +14,6 @@ import baseConfig from "./webpack.config.base";
 import webpackPaths from "./webpack.paths";
 import checkNodeEnv from "../scripts/check-node-env";
 import deleteSourceMaps from "../scripts/delete-source-maps";
-import CspHtmlWebpackPlugin from "csp-html-webpack-plugin";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 
 checkNodeEnv("production");
@@ -140,11 +139,6 @@ const configuration: webpack.Configuration = {
     }),
 
     new NodePolyfillPlugin(),
-
-    new CspHtmlWebpackPlugin({
-      "script-src": "",
-      "style-src": ["'self'"],
-    }),
   ],
 };
 
