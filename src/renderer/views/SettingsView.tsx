@@ -58,12 +58,10 @@ const settingItems = settings.flatMap((section) => section.items);
 
 export const SettingsView: React.FC = () => {
   const { pathname } = useLocation();
-  // const { path } = useMatch();
-  const path = "/";
   const { close } = useSettingsModal();
 
   const isActive = (name: string): boolean => {
-    return pathname === `${path}/${name}`;
+    return pathname.endsWith(name);
   };
 
   useMousetrap("escape", close);
@@ -120,7 +118,7 @@ export const SettingsView: React.FC = () => {
                           key={item.name}
                           selected={isActive(item.path)}
                           component={Link}
-                          to={`${path}/${item.path}`}
+                          to={item.path}
                           css={css`
                             border-radius: 10px;
                             padding-top: 4px;
@@ -150,17 +148,10 @@ export const SettingsView: React.FC = () => {
         rightSide={
           <ContentColumn>
             <Routes>
-              {settingItems.map((item) => {
-                const fullItemPath = `${path}/${item.path}`;
-                return (
-                  <Route key={fullItemPath} path={fullItemPath}>
-                    {item.component}
-                  </Route>
-                );
-              })}
-              {settingItems.length > 0 && (
-                <Route path={path} element={<Navigate to={`${path}/${settingItems[0].path}`} />} />
-              )}
+              {settingItems.map((item) => (
+                <Route key={item.path} path={`${item.path}/*`} element={item.component} />
+              ))}
+              {settingItems.length > 0 && <Route path="*" element={<Navigate to={settingItems[0].path} />} />}
             </Routes>
           </ContentColumn>
         }

@@ -14,8 +14,8 @@ export const ReplayBrowserPage: React.FC = () => {
 
   return (
     <Routes>
-      <Route path={`list`} element={<ReplayBrowser />} />
-      <Route path={`:filePath`} element={<ChildPage goBack={() => navigate("..")} />} />
+      <Route path="list" element={<ReplayBrowser />} />
+      <Route path=":filePath" element={<ChildPage goBack={() => navigate("..")} />} />
       <Route path="*" element={<Navigate replace to={lastPath} />} />
     </Routes>
   );

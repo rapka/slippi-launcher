@@ -18,10 +18,10 @@ export interface MainMenuProps {
   menuItems: MenuItem[];
 }
 
-export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
-  // const location = useLocation();
+export const MainMenu: React.FC<MainMenuProps> = ({ menuItems }) => {
+  const location = useLocation();
   const isActive = (name: string): boolean => {
-    return false; // location.pathname.startsWith(`${path}/${name}`);
+    return location.pathname.endsWith(`/${name}`);
   };
 
   return (
@@ -35,7 +35,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
         return (
           <MenuButton key={item.subpath} selected={isActive(item.subpath)}>
             <Tooltip title={item.title}>
-              <Button component={Link} to={`./${item.subpath}`}>
+              <Button component={Link} to={item.subpath}>
                 {item.icon ? item.icon : item.title}
               </Button>
             </Tooltip>
