@@ -12,6 +12,7 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+import { colors } from "@common/colors";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
@@ -70,9 +71,18 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
     icon: getAssetPath("icon.png"),
+
+    width: 1100,
+    height: 728,
+    minHeight: isDevelopment ? undefined : 450,
+    minWidth: isDevelopment ? undefined : 900,
+    backgroundColor: colors.purpleDarker,
+
+    // This setting only takes effect on macOS, and simply opts it into the modern
+    // Big-Sur frame UI for the window style.
+    titleBarStyle: "hiddenInset",
+
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },

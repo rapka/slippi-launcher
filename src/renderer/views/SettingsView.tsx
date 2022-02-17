@@ -11,7 +11,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import Tooltip from "@material-ui/core/Tooltip";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
-import { Link, Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
@@ -57,12 +57,13 @@ const CloseButton = styled(IconButton)`
 const settingItems = settings.flatMap((section) => section.items);
 
 export const SettingsView: React.FC = () => {
-  const history = useHistory();
-  const { path } = useRouteMatch();
+  const { pathname } = useLocation();
+  // const { path } = useMatch();
+  const path = "/";
   const { close } = useSettingsModal();
 
   const isActive = (name: string): boolean => {
-    return history.location.pathname === `${path}/${name}`;
+    return pathname === `${path}/${name}`;
   };
 
   useMousetrap("escape", close);
@@ -148,7 +149,7 @@ export const SettingsView: React.FC = () => {
         }
         rightSide={
           <ContentColumn>
-            <Switch>
+            <Routes>
               {settingItems.map((item) => {
                 const fullItemPath = `${path}/${item.path}`;
                 return (
@@ -158,11 +159,9 @@ export const SettingsView: React.FC = () => {
                 );
               })}
               {settingItems.length > 0 && (
-                <Route exact path={path}>
-                  <Redirect to={`${path}/${settingItems[0].path}`} />
-                </Route>
+                <Route path={path} element={<Navigate to={`${path}/${settingItems[0].path}`} />} />
               )}
-            </Switch>
+            </Routes>
           </ContentColumn>
         }
       />

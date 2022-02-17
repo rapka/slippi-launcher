@@ -43,9 +43,9 @@ const App: React.FC = () => {
 
   return (
     <Routes>
-      <Route path="/main" element={<MainView />} />
+      <Route path="/main/*" element={<MainView />} />
       <Route path="/landing" element={<LandingView />} />
-      <Route path="/settings" element={<SettingsView />} />
+      <Route path="/settings/*" element={<SettingsView />} />
       <Route path="/" element={<Navigate replace to="/landing" />} />
       <Route element={<NotFoundView />} />
     </Routes>

@@ -6,7 +6,14 @@ import webpack from "webpack";
 import webpackPaths from "./webpack.paths";
 import { dependencies as externals } from "../../release/app/package.json";
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
+import pkg from "../../package.json";
 import path from "path";
+
+import moment from "moment";
+import { execSync } from "child_process";
+
+const buildDate = moment().toISOString();
+const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],
@@ -55,6 +62,12 @@ const configuration: webpack.Configuration = {
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: "production",
+    }),
+
+    new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify(pkg.version),
+      __DATE__: JSON.stringify(buildDate),
+      __COMMIT__: JSON.stringify(commitHash),
     }),
   ],
 };

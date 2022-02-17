@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export interface MenuItem {
   subpath: string;
@@ -19,9 +19,9 @@ export interface MainMenuProps {
 }
 
 export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
-  const history = useHistory();
+  // const location = useLocation();
   const isActive = (name: string): boolean => {
-    return history.location.pathname.startsWith(`${path}/${name}`);
+    return false; // location.pathname.startsWith(`${path}/${name}`);
   };
 
   return (
@@ -35,7 +35,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ path, menuItems }) => {
         return (
           <MenuButton key={item.subpath} selected={isActive(item.subpath)}>
             <Tooltip title={item.title}>
-              <Button component={Link} to={`${path}/${item.subpath}`}>
+              <Button component={Link} to={`./${item.subpath}`}>
                 {item.icon ? item.icon : item.title}
               </Button>
             </Tooltip>
