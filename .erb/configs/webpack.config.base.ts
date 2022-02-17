@@ -6,7 +6,7 @@ import webpack from "webpack";
 import webpackPaths from "./webpack.paths";
 import { dependencies as externals } from "../../release/app/package.json";
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
-import pkg from "../../package.json";
+import pkg from "../../release/app/package.json";
 import path from "path";
 
 import moment from "moment";
