@@ -2,7 +2,7 @@ import { characters as charUtils } from "@slippi/slippi-js";
 
 // Fix static folder access in development. For more information see:
 // https://github.com/electron-userland/electron-webpack/issues/99#issuecomment-459251702
-export const getStatic = window.electron.common.getAssetPath;
+const getAssetPath = window.electron.common.getAssetPath;
 
 export const getCharacterIcon = (characterId: number | null, characterColor: number | null = 0): string => {
   if (characterId !== null) {
@@ -11,14 +11,14 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
       const allColors = characterInfo.colors;
       // Make sure it's a valid color, otherwise use the default color
       const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
-      return getStatic(`/images/characters/${characterId}/${color}/stock.png`);
+      return getAssetPath(`/images/characters/${characterId}/${color}/stock.png`);
     }
   }
-  return getStatic(`/images/unknown.png`);
+  return getAssetPath(`/images/unknown.png`);
 };
 
 export const getStageImage = (stageId: number): string => {
-  return getStatic(`/images/stages/${stageId}.png`);
+  return getAssetPath(`/images/stages/${stageId}.png`);
 };
 
 export const toOrdinal = (i: number): string => {

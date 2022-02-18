@@ -1,5 +1,6 @@
 /* eslint-disable import/no-default-export */
 
+import { isDevelopment } from "@common/constants";
 import { ipcRenderer } from "electron";
 
 import {
@@ -24,8 +25,12 @@ export default {
   onDragState(filePaths: string[]) {
     ipcRenderer.send("onDragStart", filePaths);
   },
-  getAssetPath(...paths: string[]) {
-    return ipcRenderer.sendSync("getAssetPathSync", paths) as string;
+  getAssetPath(path: string) {
+    if (isDevelopment) {
+      // We serve the assets folder using webpack-dev-server so it should already be accessible.
+      return path;
+    }
+    return ipcRenderer.sendSync("getAssetPathSync", [path]) as string;
   },
   async checkForAppUpdates(): Promise<void> {
     await ipc_checkForUpdate.renderer!.trigger({});
