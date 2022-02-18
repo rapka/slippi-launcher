@@ -40,7 +40,7 @@ function filenameToDateAndTime(fileName: string): moment.Moment | null {
 }
 
 export function monthDayHourFormat(time: moment.Moment): string | null {
-  if (!moment.isMoment(time)) {
+  if (!("format" in time) || !moment.isMoment(time)) {
     return null;
   }
 
