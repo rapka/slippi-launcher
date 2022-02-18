@@ -149,7 +149,7 @@
     "electron-dl": "^3.3.0",
     "electron-log": "^4.4.4",
     "electron-settings": "^4.0.2",
-    "electron-updater": "^4.6.4",
+    "electron-updater": "^4.6.5",
     "extract-dmg": "^1.0.0",
     "firebase": "^8.1.2",
     "fs-extra": "^9.0.1",
@@ -172,7 +172,6 @@
     "react-toast-notifications": "^2.4.4",
     "react-virtualized-auto-sizer": "^1.0.3",
     "react-window": "^1.8.6",
-    "regenerator-runtime": "^0.13.9",
     "zustand": "^3.2.0"
   },
   "devEngines": {

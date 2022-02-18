@@ -9,9 +9,6 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-
 import { colors } from "@common/colors";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import log from "electron-log";
@@ -109,9 +106,9 @@ const createWindow = async () => {
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
-  mainWindow.webContents.on("new-window", (event, url) => {
-    event.preventDefault();
-    void shell.openExternal(url);
+  mainWindow.webContents.setWindowOpenHandler((edata) => {
+    void shell.openExternal(edata.url);
+    return { action: "deny" };
   });
 
   // Remove this if your app does not use auto updates
