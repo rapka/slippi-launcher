@@ -3,7 +3,7 @@ import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
 import React from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { PersistentNotification } from "@/components/PersistentNotification";
 import { PrivateRoute } from "@/components/PrivateRoute";
@@ -54,8 +54,6 @@ const menuItems: MainMenuItem[] = [
 
 export const MainView: React.FC = () => {
   const defaultRoute = menuItems.find((item) => item.default);
-  const { pathname } = useLocation();
-
   usePageNavigationShortcuts(menuItems.map((item) => `${item.subpath}`));
 
   return (
@@ -68,7 +66,7 @@ export const MainView: React.FC = () => {
       }}
     >
       <div style={{ flexShrink: 0 }}>
-        <Header path={pathname} menuItems={menuItems} />
+        <Header menuItems={menuItems} />
       </div>
       <div style={{ flex: 1, overflow: "auto", display: "flex" }}>
         <Routes>

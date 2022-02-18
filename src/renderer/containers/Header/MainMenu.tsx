@@ -1,11 +1,12 @@
 /** @jsx jsx */
-import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
+import { colors } from "common/colors";
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import type { LinkProps } from "react-router-dom";
+import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
 export interface MenuItem {
   subpath: string;
@@ -14,16 +15,10 @@ export interface MenuItem {
 }
 
 export interface MainMenuProps {
-  path: string;
   menuItems: MenuItem[];
 }
 
 export const MainMenu: React.FC<MainMenuProps> = ({ menuItems }) => {
-  const location = useLocation();
-  const isActive = (name: string): boolean => {
-    return location.pathname.endsWith(`/${name}`);
-  };
-
   return (
     <div
       css={css`
@@ -33,16 +28,33 @@ export const MainMenu: React.FC<MainMenuProps> = ({ menuItems }) => {
     >
       {menuItems.map((item) => {
         return (
-          <MenuButton key={item.subpath} selected={isActive(item.subpath)}>
-            <Tooltip title={item.title}>
-              <Button component={Link} to={item.subpath}>
-                {item.icon ? item.icon : item.title}
-              </Button>
-            </Tooltip>
-          </MenuButton>
+          <div key={item.subpath}>
+            <CustomLink to={item.subpath} title={item.title}>
+              {item.icon ? item.icon : item.title}
+            </CustomLink>
+          </div>
         );
       })}
     </div>
+  );
+};
+
+interface CustomLinkProps extends LinkProps {
+  title: string;
+}
+
+const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
+  const resolved = useResolvedPath(to);
+  const match = useMatch({ path: resolved.pathname, end: false });
+
+  return (
+    <MenuButton selected={match !== null}>
+      <Tooltip title={title}>
+        <Button component={Link} to={to} {...(props as any)}>
+          {children}
+        </Button>
+      </Tooltip>
+    </MenuButton>
   );
 };
 

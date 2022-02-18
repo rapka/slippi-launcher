@@ -34,11 +34,10 @@ const OuterBox = styled(Box)`
   height: 70px;
 `;
 export interface HeaderProps {
-  path: string;
   menuItems: MenuItem[];
 }
 
-export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
+export const Header: React.FC<HeaderProps> = ({ menuItems }) => {
   const [startGameModalOpen, setStartGameModalOpen] = React.useState(false);
   const [activateOnlineModal, setActivateOnlineModal] = React.useState(false);
   const openModal = useLoginModal((store) => store.openModal);
@@ -125,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({ path, menuItems }) => {
             </PlayIcon>
           </ButtonBase>
         </div>
-        <MainMenu path={path} menuItems={menuItems} />
+        <MainMenu menuItems={menuItems} />
       </div>
       <Box display="flex" alignItems="center">
         {currentUser ? (

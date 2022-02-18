@@ -1,5 +1,4 @@
 /** @jsx jsx */
-import { colors } from "@common/colors";
 import { css, jsx } from "@emotion/react";
 import styled from "@emotion/styled";
 import IconButton from "@material-ui/core/IconButton";
@@ -10,8 +9,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Tooltip from "@material-ui/core/Tooltip";
 import CloseIcon from "@material-ui/icons/Close";
+import { colors } from "common/colors";
 import React from "react";
-import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import type { LinkProps } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
 
 import { DualPane } from "@/components/DualPane";
 import { BuildInfo } from "@/containers/Settings/BuildInfo";
@@ -57,13 +58,7 @@ const CloseButton = styled(IconButton)`
 const settingItems = settings.flatMap((section) => section.items);
 
 export const SettingsView: React.FC = () => {
-  const { pathname } = useLocation();
   const { close } = useSettingsModal();
-
-  const isActive = (name: string): boolean => {
-    return pathname.endsWith(name);
-  };
-
   useMousetrap("escape", close);
 
   return (
@@ -113,29 +108,19 @@ export const SettingsView: React.FC = () => {
                   >
                     {section.items.map((item) => {
                       return (
-                        <ListItem
-                          button
-                          key={item.name}
-                          selected={isActive(item.path)}
-                          component={Link}
-                          to={item.path}
-                          css={css`
-                            border-radius: 10px;
-                            padding-top: 4px;
-                            padding-bottom: 4px;
-                            margin: 2px 0;
-                          `}
-                        >
-                          {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
-                          <ListItemText
-                            primary={item.name}
-                            css={css`
-                              .MuiTypography-body1 {
-                                font-size: 16px;
-                              }
-                            `}
-                          />
-                        </ListItem>
+                        <div key={item.name}>
+                          <CustomLink to={item.path}>
+                            {item.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
+                            <ListItemText
+                              primary={item.name}
+                              css={css`
+                                .MuiTypography-body1 {
+                                  font-size: 16px;
+                                }
+                              `}
+                            />
+                          </CustomLink>
+                        </div>
                       );
                     })}
                   </List>
@@ -148,14 +133,37 @@ export const SettingsView: React.FC = () => {
         rightSide={
           <ContentColumn>
             <Routes>
-              {settingItems.map((item) => (
-                <Route key={item.path} path={`${item.path}/*`} element={item.component} />
-              ))}
+              {settingItems.map((item) => {
+                return <Route key={item.path} path={item.path} element={item.component} />;
+              })}
               {settingItems.length > 0 && <Route path="*" element={<Navigate to={settingItems[0].path} />} />}
             </Routes>
           </ContentColumn>
         }
       />
     </Outer>
+  );
+};
+
+const CustomLink = ({ children, to, ...props }: LinkProps) => {
+  const resolved = useResolvedPath(to);
+  const match = useMatch({ path: resolved.pathname, end: true });
+
+  return (
+    <ListItem
+      button
+      selected={match !== null}
+      component={Link}
+      to={to}
+      {...(props as any)}
+      css={css`
+        border-radius: 10px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        margin: 2px 0;
+      `}
+    >
+      {children}
+    </ListItem>
   );
 };
