@@ -7,6 +7,7 @@ import webpackPaths from "./webpack.paths";
 import { dependencies as externals } from "../../release/app/package.json";
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 import pkg from "../../release/app/package.json";
+import Dotenv from "dotenv-webpack";
 import path from "path";
 
 import moment from "moment";
@@ -68,6 +69,10 @@ const configuration: webpack.Configuration = {
       __VERSION__: JSON.stringify(pkg.version),
       __DATE__: JSON.stringify(buildDate),
       __COMMIT__: JSON.stringify(commitHash),
+    }),
+
+    new Dotenv({
+      path: path.join(webpackPaths.rootPath, ".env"),
     }),
   ],
 };
