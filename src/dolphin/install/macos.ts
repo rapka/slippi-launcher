@@ -1,7 +1,8 @@
-import extractDmg from "extract-dmg";
 import * as fs from "fs-extra";
 import os from "os";
 import path from "path";
+
+import { extractDmg } from "./extractDmg";
 
 export async function installDolphinOnMac({
   assetPath,
@@ -22,7 +23,7 @@ export async function installDolphinOnMac({
   }
 
   log(`Extracting to: ${destinationFolder}`);
-  extractDmg(assetPath, destinationFolder);
+  await extractDmg(assetPath, destinationFolder);
   const files = await fs.readdir(destinationFolder);
   await Promise.all(
     files

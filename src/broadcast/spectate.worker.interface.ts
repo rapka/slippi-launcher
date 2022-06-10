@@ -5,7 +5,7 @@ import { Worker } from "threads";
 import type { RegisteredWorker } from "utils/registerWorker";
 import { registerWorker } from "utils/registerWorker";
 
-import { ipc_broadcastErrorOccurredEvent, ipc_broadcastListUpdatedEvent, ipc_spectateReconnectEvent } from "./ipc";
+import { ipc_broadcastListUpdatedEvent, ipc_spectateErrorOccurredEvent, ipc_spectateReconnectEvent } from "./ipc";
 import type { WorkerSpec as SpectateWorkerSpec } from "./spectate.worker";
 import type { BroadcasterItem } from "./types";
 
@@ -28,22 +28,18 @@ export async function createSpectateWorker(dolphinManager: DolphinManager): Prom
   worker.getErrorObservable().subscribe((err) => {
     log.error(err);
     const errorMessage = err instanceof Error ? err.message : err;
-    ipc_broadcastErrorOccurredEvent.main!.trigger({ errorMessage }).catch(log.error);
+    void ipc_spectateErrorOccurredEvent.main!.trigger({ errorMessage });
   });
-  worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath }) => {
+  worker.getSpectateDetailsObservable().subscribe(({ playbackId, filePath, broadcasterName }) => {
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       replay: filePath,
+      gameStation: broadcasterName,
     };
     dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(log.error);
   });
   worker.getReconnectObservable().subscribe(() => {
     ipc_spectateReconnectEvent.main!.trigger({}).catch(log.error);
   });
-
-  dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {
-    worker.dolphinClosed(playbackId).catch(log.error);
-  });
-
   return worker;
 }

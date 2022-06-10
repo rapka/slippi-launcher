@@ -2,8 +2,6 @@ import { characters as charUtils, stages as stageUtils } from "@slippi/slippi-js
 
 import unknownCharacterIcon from "@/styles/images/unknown.png";
 
-const { isLinux, isWindows } = window.electron.common;
-
 const characterIcons = require.context("../styles/images/characters", true);
 const stageIcons = require.context("../styles/images/stages");
 
@@ -14,7 +12,11 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
       const allColors = characterInfo.colors;
       // Make sure it's a valid color, otherwise use the default color
       const color = characterColor !== null && characterColor <= allColors.length - 1 ? characterColor : 0;
-      return characterIcons(`./${characterId}/${color}/stock.png`);
+      try {
+        return characterIcons(`./${characterId}/${color}/stock.png`);
+      } catch (err) {
+        console.warn(`Failed to find stock icon for character ID ${characterId} and color ${color}.`);
+      }
     }
   }
   return unknownCharacterIcon;
@@ -23,7 +25,11 @@ export const getCharacterIcon = (characterId: number | null, characterColor: num
 export const getStageImage = (stageId: number): string => {
   const stageInfo = stageUtils.getStageInfo(stageId);
   if (stageInfo.id !== stageUtils.UnknownStage.id) {
-    return stageIcons(`./${stageId}.png`);
+    try {
+      return stageIcons(`./${stageId}.png`);
+    } catch (err) {
+      console.warn(`Failed to find stage image for stage ID ${stageId}`);
+    }
   }
   return "";
 };
@@ -54,55 +60,4 @@ export const humanReadableBytes = (bytes: number): string => {
   }
 
   return `0 ${sizes[0]}`;
-};
-
-export const handleDolphinExitCode = (exitCode: number | null): string | null => {
-  if (exitCode === null || exitCode === 0) {
-    return null;
-  }
-
-  let err: string | null = null;
-
-  if (isWindows) {
-    err = handleWindowsExitCode(exitCode);
-  }
-
-  if (isLinux) {
-    err = handleLinuxExitCode(exitCode);
-  }
-
-  return err;
-};
-
-const handleWindowsExitCode = (exitCode: number): string | null => {
-  switch (exitCode) {
-    case 0x3: {
-      // returned when selecting update in game
-      return null;
-    }
-    case 0xc0000135:
-    case 0xc0000409:
-    case 0xc000007b: {
-      return "Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.";
-    }
-    case 0xc0000005: {
-      return "Install the latest Windows update available and then restart your computer.";
-    }
-    default: {
-      return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
-    }
-  }
-};
-
-const handleLinuxExitCode = (exitCode: number): string => {
-  switch (exitCode) {
-    case 0x7f: {
-      return "Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's linux-support channel for further assistance if needed.";
-    }
-    default: {
-      return `Dolphin exited with error code: 0x${exitCode.toString(16)}.
-      Please screenshot this and post it in a support channel in the Slippi Discord for assistance.`;
-    }
-  }
 };

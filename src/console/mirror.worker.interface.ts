@@ -33,21 +33,18 @@ export async function createMirrorWorker(dolphinManager: DolphinManager): Promis
     ipc_consoleMirrorErrorMessageEvent.main!.trigger({ message }).catch(log.error);
   });
 
-  worker.getMirrorDetailsObservable().subscribe(({ playbackId, filePath, isRealtime }) => {
+  worker.getMirrorDetailsObservable().subscribe(({ playbackId, filePath, isRealtime, nickname }) => {
     const replayComm: ReplayCommunication = {
       mode: "mirror",
       isRealTimeMode: isRealtime,
       replay: filePath,
+      gameStation: nickname,
     };
     dolphinManager.launchPlaybackDolphin(playbackId, replayComm).catch(log.error);
   });
 
   worker.getMirrorStatusObservable().subscribe((statusUpdate) => {
     ipc_consoleMirrorStatusUpdatedEvent.main!.trigger(statusUpdate).catch(log.error);
-  });
-
-  dolphinManager.on("playback-dolphin-closed", (playbackId: string) => {
-    worker.dolphinClosed(playbackId).catch(log.error);
   });
 
   return worker;

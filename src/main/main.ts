@@ -11,6 +11,7 @@
  */
 import { colors } from "@common/colors";
 import { delay } from "@common/delay";
+import { DolphinLaunchType } from "@dolphin/types";
 import { ipc_statsPageRequestedEvent } from "@replays/ipc";
 import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import type CrossProcessExports from "electron";
@@ -22,9 +23,9 @@ import get from "lodash/get";
 import last from "lodash/last";
 import path from "path";
 import url from "url";
+import { download } from "utils/download";
 import { fileExists } from "utils/fileExists";
 
-import { download } from "./download";
 import { installModules } from "./installModules";
 import { MenuBuilder } from "./menu";
 import { resolveHtmlPath } from "./util";
@@ -65,7 +66,7 @@ if (isDevelopment) {
 
 const installExtensions = async () => {
   const installer = require("electron-devtools-installer");
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  const forceDownload = Boolean(process.env.UPGRADE_EXTENSIONS);
   const extensions = ["REACT_DEVELOPER_TOOLS"];
 
   return installer
@@ -225,7 +226,7 @@ const handleSlippiURIAsync = async (aUrl: string) => {
         const dlUrl = `https://storage.googleapis.com/slippi.appspot.com/${replayPath}`;
         log.info(`Downloading file ${replayPath} to ${destination}`);
         // Dowload file
-        await download(dlUrl, destination);
+        await download({ url: dlUrl, destinationFile: destination, overwrite: true });
         log.info(`Finished download`);
       } else {
         log.info(`${destination} already exists. Skipping download...`);
@@ -279,12 +280,18 @@ app.on("second-instance", (_, argv) => {
 });
 
 const playReplayAndShowStats = async (filePath: string) => {
+  // Ensure playback dolphin is actually installed
+  await dolphinManager.installDolphin(DolphinLaunchType.PLAYBACK);
+
+  // Launch the replay
+  await dolphinManager.launchPlaybackDolphin("playback", {
+    mode: "normal",
+    replay: filePath,
+  });
+
+  // Show the stats page
   await waitForMainWindow();
   if (mainWindow) {
-    await dolphinManager.launchPlaybackDolphin("playback", {
-      mode: "normal",
-      replay: filePath,
-    });
     await ipc_statsPageRequestedEvent.main!.trigger({ filePath });
   }
 };

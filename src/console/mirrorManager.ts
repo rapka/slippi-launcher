@@ -36,7 +36,13 @@ export class MirrorManager extends EventEmitter {
 
     this.emit(MirrorEvent.LOG, "Setting up mirror");
 
-    await fs.ensureDir(config.folderPath);
+    try {
+      await fs.ensureDir(config.folderPath);
+    } catch (err) {
+      if (err) {
+        this.emit(MirrorEvent.ERROR, err);
+      }
+    }
 
     const fileWriter = new SlpFileWriter({ folderPath: config.folderPath, consoleNickname: "unknown" });
     fileWriter.on(SlpFileWriterEvent.NEW_FILE, (currFilePath) => {
@@ -233,7 +239,13 @@ export class MirrorManager extends EventEmitter {
   }
 
   private async _playFile(filePath: string, playbackId: string) {
-    return this.emit(MirrorEvent.NEW_FILE, playbackId, filePath, this.mirrors[playbackId].isRealtime);
+    return this.emit(
+      MirrorEvent.NEW_FILE,
+      playbackId,
+      filePath,
+      this.mirrors[playbackId].isRealtime,
+      this.mirrors[playbackId].nickname,
+    );
   }
 
   public async handleClosedDolphin(playbackId: string) {

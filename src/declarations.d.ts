@@ -11,3 +11,8 @@ declare module "raw-loader!*.md" {
   const content: string;
   export default content;
 }
+
+declare module "dmg" {
+  export declare function mount(filename: string, callback: (err: unknown, value: string) => void): string;
+  export declare function unmount(mountPath: string, callback: (err: unknown) => void);
+}
